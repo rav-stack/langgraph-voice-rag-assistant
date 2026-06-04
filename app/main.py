@@ -212,4 +212,45 @@ def evaluate_endpoint():
 
     return {"summary": report["summary"], "report_path": latest}
 
+
+@app.get("/api/health")
+def health_endpoint():
+    status = {
+        "application": "ok",
+        "llm": "unknown",
+        "vector_store": "unknown",
+        "voice": "unknown",
+    }
+
+    # LLM: is the API key configuration check
+    status["llm"] = "ok" if os.getenv("GROQ_API_KEY") else "not_configured"
+
+    # Vector store available ?
+    ingested = False
+    chunk_count = 0
+    try:
+        from app.services.vectorstore_service import get_vectorstore
+        vs = get_vectorstore()
+        chunk_count = len(vs.get().get("ids", []))
+        ingested = chunk_count > 0
+        status["vector_store"] = "ok" if ingested else "empty (run POST /api/ingest)"
+    except Exception as e:
+        status["vector_store"] = f"error: {type(e).__name__}"
+
+    # Voice: is faster-whisper installed?
+    try:
+        import faster_whisper  # noqa: F401
+        status["voice"] = "available"
+    except Exception:
+        status["voice"] = "not_available"
+
+    overall = "ok" if status["llm"] == "ok" and ingested else "degraded"
+
+    return {
+        "status": overall,
+        "knowledge_base_ingested": ingested,
+        "chunk_count": chunk_count,
+        "components": status,
+    }
+
 #uvicorn app.main:app --reload
