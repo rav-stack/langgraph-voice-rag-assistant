@@ -1,0 +1,240 @@
+{
+  "summary": {
+    "total": 16,
+    "source_correct_rate": 0.92,
+    "keyword_match_rate": 0.83,
+    "unsupported_handled_rate": 1.0,
+    "avg_latency_ms": 11839.37
+  },
+  "results": [
+    {
+      "id": 1,
+      "type": "answerable",
+      "question": "How do I request VPN access?",
+      "answer": "To request VPN access, submit a ticket through the IT Service Portal under \"Network Access > VPN Request\". Include your manager's name for approval. [vpn_access.md]",
+      "sources": [
+        "vpn_access.md"
+      ],
+      "expected_source": "vpn_access.md",
+      "latency_ms": 19039.86,
+      "checks": {
+        "source_correct": true,
+        "keyword_match": true
+      }
+    },
+    {
+      "id": 2,
+      "type": "answerable",
+      "question": "How long does VPN access approval take?",
+      "answer": "Approval Time VPN requests are typically approved within 1 business day [vpn_access.md].",
+      "sources": [
+        "vpn_access.md"
+      ],
+      "expected_source": "vpn_access.md",
+      "latency_ms": 3845.8,
+      "checks": {
+        "source_correct": true,
+        "keyword_match": true
+      }
+    },
+    {
+      "id": 3,
+      "type": "answerable",
+      "question": "Which client do I use to connect to the VPN?",
+      "answer": "I do not have enough information in the knowledge base.",
+      "sources": [],
+      "expected_source": "vpn_access.md",
+      "latency_ms": 6305.43,
+      "checks": {
+        "source_correct": false,
+        "keyword_match": false
+      }
+    },
+    {
+      "id": 4,
+      "type": "answerable",
+      "question": "How do I reset my password?",
+      "answer": "To reset your password, visit the Self-Service Password Reset portal at reset.company-sample.net and verify your identity using multi-factor authentication before setting a new password [password_reset_policy.pdf].",
+      "sources": [
+        "vpn_access.md",
+        "password_reset_policy.pdf"
+      ],
+      "expected_source": "password_reset_policy.pdf",
+      "latency_ms": 4443.59,
+      "checks": {
+        "source_correct": true,
+        "keyword_match": true
+      }
+    },
+    {
+      "id": 5,
+      "type": "answerable",
+      "question": "What are the password requirements?",
+      "answer": "Passwords must be at least 12 characters long and include one uppercase letter, one number, and one special character. [password_reset_policy.pdf]",
+      "sources": [
+        "password_reset_policy.pdf",
+        "vpn_troubleshooting.txt"
+      ],
+      "expected_source": "password_reset_policy.pdf",
+      "latency_ms": 4615.29,
+      "checks": {
+        "source_correct": true,
+        "keyword_match": true
+      }
+    },
+    {
+      "id": 6,
+      "type": "answerable",
+      "question": "What happens after multiple failed login attempts?",
+      "answer": "After five failed login attempts, your account is locked for 30 minutes. [password_reset_policy.pdf]",
+      "sources": [
+        "password_reset_policy.pdf"
+      ],
+      "expected_source": "password_reset_policy.pdf",
+      "latency_ms": 4603.34,
+      "checks": {
+        "source_correct": true,
+        "keyword_match": true
+      }
+    },
+    {
+      "id": 7,
+      "type": "answerable",
+      "question": "When are salaries paid each month?",
+      "answer": "Salaries are processed on the last working day of each month. [payroll_policy.txt]",
+      "sources": [
+        "payroll_policy.txt"
+      ],
+      "expected_source": "payroll_policy.txt",
+      "latency_ms": 14975.76,
+      "checks": {
+        "source_correct": true,
+        "keyword_match": true
+      }
+    },
+    {
+      "id": 8,
+      "type": "answerable",
+      "question": "How many days of annual leave do employees get?",
+      "answer": "Employees are entitled to 20 days of paid annual leave per calendar year. [leave_policy.txt]",
+      "sources": [
+        "leave_policy.txt"
+      ],
+      "expected_source": "leave_policy.txt",
+      "latency_ms": 15523.52,
+      "checks": {
+        "source_correct": true,
+        "keyword_match": true
+      }
+    },
+    {
+      "id": 9,
+      "type": "answerable",
+      "question": "If my VPN keeps failing, what network change can I try?",
+      "answer": "I do not have enough information in the knowledge base.",
+      "sources": [
+        "vpn_troubleshooting.txt"
+      ],
+      "expected_source": "vpn_troubleshooting.txt",
+      "latency_ms": 14729.91,
+      "checks": {
+        "source_correct": true,
+        "keyword_match": false
+      }
+    },
+    {
+      "id": 10,
+      "type": "followup",
+      "question": "How long does that approval take?",
+      "answer": "Approval for VPN requests is typically processed within 1 business day. Requests submitted after 5 PM are processed the next working day. [vpn_access.md]",
+      "sources": [
+        "vpn_access.md",
+        "payroll_policy.txt"
+      ],
+      "expected_source": "vpn_access.md",
+      "latency_ms": 14385.24,
+      "checks": {
+        "source_correct": true,
+        "keyword_match": true
+      }
+    },
+    {
+      "id": 11,
+      "type": "followup",
+      "question": "And how often do they expire?",
+      "answer": "Passwords expire every 90 days. [password_reset_policy.pdf]",
+      "sources": [
+        "password_reset_policy.pdf"
+      ],
+      "expected_source": "password_reset_policy.pdf",
+      "latency_ms": 13806.96,
+      "checks": {
+        "source_correct": true,
+        "keyword_match": true
+      }
+    },
+    {
+      "id": 12,
+      "type": "followup",
+      "question": "How many of those can I carry forward?",
+      "answer": "Unused annual leave can be carried forward up to 10 days to next year [leave_policy.txt].",
+      "sources": [
+        "leave_policy.txt"
+      ],
+      "expected_source": "leave_policy.txt",
+      "latency_ms": 13874.43,
+      "checks": {
+        "source_correct": true,
+        "keyword_match": true
+      }
+    },
+    {
+      "id": 13,
+      "type": "unsupported",
+      "question": "How do I request a new company car?",
+      "answer": "I do not have enough information in the knowledge base.",
+      "sources": [],
+      "expected_source": null,
+      "latency_ms": 14968.03,
+      "checks": {
+        "unsupported_handled": true
+      }
+    },
+    {
+      "id": 14,
+      "type": "unsupported",
+      "question": "What is the CEO's home address?",
+      "answer": "I do not have enough information in the knowledge base.",
+      "sources": [],
+      "expected_source": null,
+      "latency_ms": 14200.5,
+      "checks": {
+        "unsupported_handled": true
+      }
+    },
+    {
+      "id": 15,
+      "type": "unsupported",
+      "question": "How many vacation days do astronauts get on Mars?",
+      "answer": "I do not have enough information in the knowledge base.",
+      "sources": [],
+      "expected_source": null,
+      "latency_ms": 13716.48,
+      "checks": {
+        "unsupported_handled": true
+      }
+    },
+    {
+      "id": 16,
+      "type": "unsupported",
+      "question": "What is the company's stock price forecast for next year?",
+      "answer": "I do not have enough information in the knowledge base.",
+      "sources": [],
+      "expected_source": null,
+      "latency_ms": 16395.82,
+      "checks": {
+        "unsupported_handled": true
+      }
+    }
+  ]
+}

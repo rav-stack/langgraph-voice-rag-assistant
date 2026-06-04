@@ -14,7 +14,10 @@ from app.graph.chat_graph import chat_graph
 from app.schemas.chat import ChatRequest,ChatResponse,VoiceChatResponse
 from app.utils.logger import logger
 from app.services.stt_service import transcribe_audio
-from eval.run import run_evaluation
+import subprocess
+import sys
+import glob
+import json
 
 
 DATA_PATH = os.getenv("DATA_PATH","data/raw")
@@ -186,8 +189,27 @@ def voice_chat_endpoint(
 
 @app.post("/api/evaluate")
 def evaluate_endpoint():
-    return run_evaluation()
+    # Run eval in a separate process so heavy ML doesn't destabilize the server
+    proc = subprocess.run(
+        [sys.executable, "-m", "eval.run"],
+        capture_output=True,
+        text=True,
+    )
+    if proc.returncode != 0:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Evaluation failed: {proc.stderr[-500:]}",
+        )
 
-    
+    # Read the most recent JSON report that eval.run just wrote
+    reports = sorted(glob.glob("eval/reports/report_*.json"))
+    if not reports:
+        raise HTTPException(status_code=500, detail="No report generated.")
+
+    latest = reports[-1]
+    with open(latest) as f:
+        report = json.load(f)
+
+    return {"summary": report["summary"], "report_path": latest}
+
 #uvicorn app.main:app --reload
-#python -m scripts.ingest_data
