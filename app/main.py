@@ -14,6 +14,7 @@ from app.graph.chat_graph import chat_graph
 from app.schemas.chat import ChatRequest,ChatResponse,VoiceChatResponse
 from app.utils.logger import logger
 from app.services.stt_service import transcribe_audio
+from eval.run import run_evaluation
 
 
 DATA_PATH = os.getenv("DATA_PATH","data/raw")
@@ -183,5 +184,10 @@ def voice_chat_endpoint(
         latency_ms=latency_ms,
     )
 
+@app.post("/api/evaluate")
+def evaluate_endpoint():
+    return run_evaluation()
+
+    
 #uvicorn app.main:app --reload
 #python -m scripts.ingest_data
