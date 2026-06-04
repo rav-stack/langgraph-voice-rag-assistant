@@ -1,0 +1,22 @@
+VPN TROUBLESHOOTING GUIDE
+
+1. Check Internet Connection:
+Ensure you have a stable internet connection before connecting to VPN.
+
+2. Restart VPN Client:
+Close and reopen the VPN application. Try reconnecting.
+
+3. Verify Credentials:
+Make sure your username and password are correct.
+
+4. Switch Network:
+Try connecting using a different network (e.g., mobile hotspot).
+
+5. Update VPN Client:
+Ensure you are using the latest version of the VPN software.
+
+6. Firewall/Antivirus Check:
+Temporarily disable firewall or antivirus to see if they are blocking the connection.
+
+7. Contact IT Support:
+If the issue persists, contact IT support with error screenshots and logs.

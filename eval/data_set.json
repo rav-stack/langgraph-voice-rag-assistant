@@ -1,0 +1,146 @@
+[
+    {
+      "id": 1,
+      "type": "answerable",
+      "question": "How do I request VPN access?",
+      "setup_question": null,
+      "expected_source": "vpn_access.md",
+      "expected_keywords": ["ticket", "IT Service Portal", "VPN"],
+      "unsupported": false
+    },
+    {
+      "id": 2,
+      "type": "answerable",
+      "question": "How long does VPN access approval take?",
+      "setup_question": null,
+      "expected_source": "vpn_access.md",
+      "expected_keywords": ["1 business day", "approved"],
+      "unsupported": false
+    },
+    {
+      "id": 3,
+      "type": "answerable",
+      "question": "Which client do I use to connect to the VPN?",
+      "setup_question": null,
+      "expected_source": "vpn_access.md",
+      "expected_keywords": ["GlobalProtect"],
+      "unsupported": false
+    },
+    {
+      "id": 4,
+      "type": "answerable",
+      "question": "How do I reset my password?",
+      "setup_question": null,
+      "expected_source": "password_reset_policy.pdf",
+      "expected_keywords": ["Self-Service", "multi-factor", "portal"],
+      "unsupported": false
+    },
+    {
+      "id": 5,
+      "type": "answerable",
+      "question": "What are the password requirements?",
+      "setup_question": null,
+      "expected_source": "password_reset_policy.pdf",
+      "expected_keywords": ["12 characters", "uppercase", "special character"],
+      "unsupported": false
+    },
+    {
+      "id": 6,
+      "type": "answerable",
+      "question": "What happens after multiple failed login attempts?",
+      "setup_question": null,
+      "expected_source": "password_reset_policy.pdf",
+      "expected_keywords": ["five", "locked", "30 minutes"],
+      "unsupported": false
+    },
+    {
+      "id": 7,
+      "type": "answerable",
+      "question": "When are salaries paid each month?",
+      "setup_question": null,
+      "expected_source": "payroll_policy.txt",
+      "expected_keywords": ["last working day", "month"],
+      "unsupported": false
+    },
+    {
+      "id": 8,
+      "type": "answerable",
+      "question": "How many days of annual leave do employees get?",
+      "setup_question": null,
+      "expected_source": "leave_policy.txt",
+      "expected_keywords": ["20 days"],
+      "unsupported": false
+    },
+    {
+      "id": 9,
+      "type": "answerable",
+      "question": "If my VPN keeps failing, what network change can I try?",
+      "setup_question": null,
+      "expected_source": "vpn_troubleshooting.txt",
+      "expected_keywords": ["different network", "hotspot"],
+      "unsupported": false
+    },
+    {
+      "id": 10,
+      "type": "followup",
+      "setup_question": "How do I request VPN access?",
+      "question": "How long does that approval take?",
+      "expected_source": "vpn_access.md",
+      "expected_keywords": ["1 business day"],
+      "unsupported": false
+    },
+    {
+      "id": 11,
+      "type": "followup",
+      "setup_question": "What are the password requirements?",
+      "question": "And how often do they expire?",
+      "expected_source": "password_reset_policy.pdf",
+      "expected_keywords": ["90 days"],
+      "unsupported": false
+    },
+    {
+      "id": 12,
+      "type": "followup",
+      "setup_question": "How many days of annual leave do employees get?",
+      "question": "How many of those can I carry forward?",
+      "expected_source": "leave_policy.txt",
+      "expected_keywords": ["10 days", "carried forward"],
+      "unsupported": false
+    },
+    {
+      "id": 13,
+      "type": "unsupported",
+      "question": "How do I request a new company car?",
+      "setup_question": null,
+      "expected_source": null,
+      "expected_keywords": [],
+      "unsupported": true
+    },
+    {
+      "id": 14,
+      "type": "unsupported",
+      "question": "What is the CEO's home address?",
+      "setup_question": null,
+      "expected_source": null,
+      "expected_keywords": [],
+      "unsupported": true
+    },
+    {
+      "id": 15,
+      "type": "unsupported",
+      "question": "How many vacation days do astronauts get on Mars?",
+      "setup_question": null,
+      "expected_source": null,
+      "expected_keywords": [],
+      "unsupported": true
+    },
+    {
+      "id": 16,
+      "type": "unsupported",
+      "question": "What is the company's stock price forecast for next year?",
+      "setup_question": null,
+      "expected_source": null,
+      "expected_keywords": [],
+      "unsupported": true
+    }
+  ]
