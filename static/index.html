@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>IT Service Copilot</title>
+<style>
+  :root {
+    --bg: #0f1117; --panel: #171a23; --panel2: #1e222e; --border: #2a2f3c;
+    --text: #e6e8ee; --muted: #9aa3b2; --accent: #5b8cff; --accent2: #3a6df0;
+    --user: #2b3550; --bot: #1e222e; --ok: #36c08a; --warn: #e0a23a; --err: #e0574a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+         background: var(--bg); color: var(--text); height: 100vh; display: flex; }
+
+  /* Sidebar */
+  .sidebar { width: 260px; background: var(--panel); border-right: 1px solid var(--border);
+             display: flex; flex-direction: column; padding: 16px; gap: 10px; }
+  .sidebar h1 { font-size: 16px; margin: 0 0 4px; }
+  .sidebar .sub { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .baseurl { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border);
+             background: var(--panel2); color: var(--text); font-size: 12px; }
+  .sec-label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+               color: var(--muted); margin-top: 8px; }
+  .btn { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+         background: var(--panel2); color: var(--text); cursor: pointer; font-size: 13px;
+         text-align: left; transition: .15s; }
+  .btn:hover { background: #262b39; border-color: var(--accent); }
+  .output { margin-top: auto; background: #0c0e14; border: 1px solid var(--border);
+            border-radius: 8px; padding: 10px; font-size: 11px; color: var(--muted);
+            white-space: pre-wrap; overflow: auto; max-height: 40vh; font-family: ui-monospace, monospace; }
+
+  /* Main chat */
+  .main { flex: 1; display: flex; flex-direction: column; }
+  .topbar { padding: 12px 18px; border-bottom: 1px solid var(--border); display: flex;
+            align-items: center; justify-content: space-between; gap: 12px; }
+  .topbar .sid { font-size: 12px; color: var(--muted); font-family: ui-monospace, monospace; }
+  .topbar button { padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border);
+                   background: var(--panel2); color: var(--text); cursor: pointer; font-size: 12px; }
+  .messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .msg { max-width: 70%; padding: 12px 14px; border-radius: 12px; line-height: 1.45; font-size: 14px; }
+  .msg.user { align-self: flex-end; background: var(--user); border-bottom-right-radius: 4px; }
+  .msg.bot { align-self: flex-start; background: var(--bot); border: 1px solid var(--border);
+             border-bottom-left-radius: 4px; }
+  .meta { margin-top: 8px; font-size: 11px; color: var(--muted); border-top: 1px solid var(--border);
+          padding-top: 6px; }
+  .meta .tag { display: inline-block; background: #0c0e14; border: 1px solid var(--border);
+               border-radius: 6px; padding: 1px 6px; margin: 2px 4px 0 0; }
+  .grounded { color: var(--ok); } .ungrounded { color: var(--warn); }
+
+  /* Composer */
+  .composer { padding: 14px 18px; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center; }
+  .composer input[type=text] { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--border);
+                               background: var(--panel2); color: var(--text); font-size: 14px; }
+  .composer button { padding: 12px 16px; border-radius: 10px; border: none; cursor: pointer; font-size: 14px;
+                     background: var(--accent2); color: #fff; }
+  .composer button:hover { background: var(--accent); }
+  .mic { background: var(--panel2) !important; border: 1px solid var(--border) !important; color: var(--text) !important; }
+  .mic.recording { background: var(--err) !important; color: #fff !important; }
+  .hint { font-size: 11px; color: var(--muted); padding: 0 18px 10px; }
+  input[type=file] { display: none; }
+</style>
+</head>
+<body>
+  <aside class="sidebar">
+    <h1>🛠️ IT Service Copilot</h1>
+    <div class="sub">RAG · LangGraph · Voice</div>
+
+    <div class="sec-label">Server</div>
+    <input id="baseUrl" class="baseurl" value="http://127.0.0.1:8000" />
+
+    <div class="sec-label">Endpoints</div>
+    <button class="btn" onclick="checkHealth()">🩺 Health</button>
+    <button class="btn" onclick="runIngest()">📥 Ingest (refresh)</button>
+    <button class="btn" onclick="document.getElementById('fileInput').click()">⬆️ Upload &amp; ingest</button>
+    <input type="file" id="fileInput" multiple onchange="uploadFiles(this.files)" />
+    <button class="btn" onclick="runEvaluate()">📊 Run evaluation</button>
+
+    <div class="sec-label">Output</div>
+    <div id="output" class="output">Endpoint results appear here.</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>Chat <span class="sid" id="sid">session: (new)</span></div>
+      <button onclick="newChat()">＋ New chat</button>
+    </div>
+    <div class="messages" id="messages"></div>
+    <div class="hint" id="status"></div>
+    <div class="composer">
+      <input type="text" id="msgInput" placeholder="Ask an IT question…"
+             onkeydown="if(event.key==='Enter') sendText()" />
+      <button class="mic" id="micBtn" onclick="toggleRecord()">🎤 Voice</button>
+      <button onclick="sendText()">Send</button>
+    </div>
+  </main>
+
+<script>
+  let sessionId = null;
+  const base = () => document.getElementById('baseUrl').value.replace(/\/$/, '');
+  const messagesEl = document.getElementById('messages');
+  const statusEl = document.getElementById('status');
+
+  function setStatus(t) { statusEl.textContent = t || ''; }
+  function setOutput(obj) {
+    document.getElementById('output').textContent =
+      typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2);
+  }
+  function setSid(id) {
+    sessionId = id;
+    document.getElementById('sid').textContent = 'session: ' + (id ? id.slice(0, 8) + '…' : '(new)');
+  }
+  function newChat() { setSid(null); messagesEl.innerHTML = ''; setStatus('Started a new conversation.'); }
+
+  function addMsg(role, text, meta) {
+    const div = document.createElement('div');
+    div.className = 'msg ' + (role === 'user' ? 'user' : 'bot');
+    div.textContent = text;
+    if (meta) {
+      const m = document.createElement('div');
+      m.className = 'meta';
+      const grounded = (meta.grounding_note || '').toLowerCase().includes('grounded');
+      let html = '';
+      if (meta.sources && meta.sources.length)
+        html += meta.sources.map(s => `<span class="tag">📄 ${s}</span>`).join('');
+      html += `<div class="${grounded ? 'grounded' : 'ungrounded'}">${meta.grounding_note || ''}</div>`;
+      if (meta.latency_ms != null) html += `<span class="tag">⏱ ${meta.latency_ms} ms</span>`;
+      m.innerHTML = html;
+      div.appendChild(m);
+    }
+    messagesEl.appendChild(div);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  async function sendText() {
+    const input = document.getElementById('msgInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    addMsg('user', text);
+    setStatus('Thinking…');
+    try {
+      const res = await fetch(base() + '/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, session_id: sessionId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'request failed');
+      setSid(data.session_id);
+      addMsg('bot', data.answer, data);
+      setStatus('');
+    } catch (e) {
+      addMsg('bot', '⚠️ ' + e.message);
+      setStatus('');
+    }
+  }
+
+  // ---- Voice (record mic -> POST /api/voice/chat) ----
+  let mediaRecorder = null, chunks = [];
+  async function toggleRecord() {
+    const btn = document.getElementById('micBtn');
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+      mediaRecorder.stop();
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      chunks = [];
+      mediaRecorder.ondataavailable = e => chunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        stream.getTracks().forEach(t => t.stop());
+        sendVoice(new Blob(chunks, { type: 'audio/webm' }));
+      };
+      mediaRecorder.start();
+      btn.classList.add('recording');
+      btn.textContent = '⏹ Stop';
+      setStatus('Recording… click Stop when done.');
+    } catch (e) {
+      setStatus('Mic access denied: ' + e.message);
+    }
+  }
+
+  async function sendVoice(blob) {
+    const btn = document.getElementById('micBtn');
+    btn.classList.remove('recording');
+    btn.textContent = '🎤 Voice';
+    setStatus('Transcribing & answering…');
+    try {
+      const fd = new FormData();
+      fd.append('audio', blob, 'recording.webm');
+      if (sessionId) fd.append('session_id', sessionId);
+      const res = await fetch(base() + '/api/voice/chat', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'voice request failed');
+      setSid(data.session_id);
+      addMsg('user', '🎤 ' + (data.transcript || '(no transcript)'));
+      addMsg('bot', data.answer, data);
+      setStatus('');
+    } catch (e) {
+      addMsg('bot', '⚠️ ' + e.message);
+      setStatus('');
+    }
+  }
+
+  // ---- Sidebar endpoint actions ----
+  async function checkHealth() {
+    setOutput('Loading…');
+    try {
+      const res = await fetch(base() + '/api/health');
+      setOutput(await res.json());
+    } catch (e) { setOutput('Error: ' + e.message); }
+  }
+  async function runIngest() {
+    setOutput('Ingesting…');
+    try {
+      const res = await fetch(base() + '/api/ingest', { method: 'POST' });
+      setOutput(await res.json());
+    } catch (e) { setOutput('Error: ' + e.message); }
+  }
+  async function uploadFiles(files) {
+    if (!files.length) return;
+    setOutput('Uploading ' + files.length + ' file(s)…');
+    try {
+      const fd = new FormData();
+      for (const f of files) fd.append('files', f, f.name);
+      const res = await fetch(base() + '/api/ingest/upload', { method: 'POST', body: fd });
+      setOutput(await res.json());
+    } catch (e) { setOutput('Error: ' + e.message); }
+  }
+  async function runEvaluate() {
+    setOutput('Running evaluation (this can take a minute)…');
+    try {
+      const res = await fetch(base() + '/api/evaluate', { method: 'POST' });
+      setOutput(await res.json());
+    } catch (e) { setOutput('Error: ' + e.message); }
+  }
+</script>
+</body>
+</html>

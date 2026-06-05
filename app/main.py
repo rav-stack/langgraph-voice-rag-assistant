@@ -1,3 +1,8 @@
+import os
+os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 from app.services.retrieval_service import retrieve_documents
@@ -18,7 +23,7 @@ import subprocess
 import sys
 import glob
 import json
-
+from fastapi.staticfiles import StaticFiles
 
 DATA_PATH = os.getenv("DATA_PATH","data/raw")
 
@@ -252,5 +257,8 @@ def health_endpoint():
         "chunk_count": chunk_count,
         "components": status,
     }
+
+app.mount("/", StaticFiles(directory="static", html=True), name="ui")
+
 
 #uvicorn app.main:app --reload

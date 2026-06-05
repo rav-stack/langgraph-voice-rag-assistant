@@ -80,7 +80,7 @@ def generate_answer_with_history(messages, context):
     response = client.chat.completions.create(
         model="llama-3.1-8b-instant",
         messages=full_messages,
-        temperature=0.2,
+        temperature=0,
     )
 
     return response.choices[0].message.content.strip()    
