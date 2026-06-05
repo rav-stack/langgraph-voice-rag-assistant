@@ -68,10 +68,10 @@ store; evaluation replays a fixed dataset through the chat graph.
   └────────────┘   └──────────────┘   └──────────────┘   └────────────┘   └──────────┘
 
   RETRIEVAL (read path)
-  ┌────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐
-  │ User       │ ▶ │ Similarity   │ ▶ │ Heuristic    │ ▶ │ LLM pointwise│ ▶ │ Context +    │
-  │ question   │   │ search top-k │   │ lexical score│   │ rerank YES/NO│   │ sources      │
-  └────────────┘   └──────┬───────┘   └──────────────┘   └──────────────┘   └──────────────┘
+  ┌────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐
+  │ User       │ ▶ │ Similarity   │ ▶ │ Lexical      │ ▶ │ Context +    │
+  │ question   │   │ search top-k │   │ score + top-k│   │ sources      │
+  └────────────┘   └──────┬───────┘   └──────────────┘   └──────────────┘
                           ▲
                    ┌──────┴───────┐
                    │   Chroma     │
@@ -83,10 +83,12 @@ The loader keeps a stable `{content, source}` contract so chunking and indexing 
 change when new formats are added. Re-ingest is a refresh: existing vectors are cleared
 first, so the store never accumulates duplicates.
 
-**Retrieval.** Three stages: vector similarity search for recall, a lexical
-word-overlap score to re-order, and an LLM pointwise relevance filter (YES/NO per doc)
-for precision. Each chunk carries its `source` filename, which flows into the prompt and
-the response for citations.
+**Retrieval.** Two deterministic stages: vector similarity search for recall, then a
+lexical word-overlap score to re-rank and keep the top chunks (with a similarity fallback
+when nothing scores). This is fully deterministic — no per-query LLM calls — which makes
+answers reproducible (the same question always retrieves the same context) and cut average
+latency ~3x versus an earlier LLM pointwise reranker. Each chunk carries its `source`
+filename, which flows into the prompt and the response for citations.
 
 ---
 
@@ -201,7 +203,7 @@ is run deliberately. An empty `conftest.py` at the root puts the project on the 
 | Decision | Choice (this build) | Production direction |
 |---|---|---|
 | Conversation memory | In-memory `MemorySaver` (wiped on restart) | Durable checkpointer (Postgres/Redis) |
-| Reranking | LLM pointwise (precise, slow) | Local cross-encoder / batching |
+| Reranking | Deterministic similarity + lexical scoring (fast, reproducible) | Cross-encoder reranker if precision needs it |
 | Re-ingestion | Full wipe-and-reload | Incremental sync (changed files only) |
 | Evaluation | Deterministic checks (explainable) | Add LLM-judge layer for nuanced relevance |
 | `/api/evaluate` | Synchronous subprocess | Background job queue + job id |

@@ -3,3 +3,4 @@
 chroma_db/
 __pycache__/
 *.pycvector_store/
+vector_store/
